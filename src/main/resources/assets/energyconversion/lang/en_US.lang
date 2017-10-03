@@ -1,0 +1,53 @@
+itemGroup.someusefulthings=Some Useful Things
+
+//item
+item.invinciblering.name=Invincible ring
+item.limitlessTool.name=Multi Tool
+item.redStoneApple.name=Redstone apple
+item.artifactsword.name=Artifact Sword
+item.compressedDiamondSword.name=Compressed Diamond Sword(Craft Only)
+item.portableInventoryItem.white.name=Backpack(white)
+item.portableInventoryItem.orange.name=Backpack(orange)
+item.portableInventoryItem.magenta.name=Backpack(magenta)
+item.portableInventoryItem.lightBlue.name=Backpack(light blue)
+item.portableInventoryItem.yellow.name=Backpack(yellow)
+item.portableInventoryItem.lime.name=Backpack(lime)
+item.portableInventoryItem.pink.name=Backpack(pink)
+item.portableInventoryItem.gray.name=Backpack(gray)
+item.portableInventoryItem.silver.name=Backpack(silver)
+item.portableInventoryItem.cyan.name=Backpack(cyan)
+item.portableInventoryItem.purple.name=Backpack(purple)
+item.portableInventoryItem.blue.name=Backpack(blue)
+item.portableInventoryItem.brown.name=Backpack(brown)
+item.portableInventoryItem.green.name=Backpack(green)
+item.portableInventoryItem.red.name=Backpack(red)
+item.portableInventoryItem.black.name=Backpack(black)
+item.bucketWwwwater.name=Wwwwater bucket
+
+//block
+tile.removeEnchantment.name=Remove Enchantment
+tile.reinforcementMachine.name=Reinforcement Machine
+tile.copyEnchantment.name=Copy Enchantment
+tile.fluidWwwwater.name=Wwwwater
+
+//fluid
+fluid.fluidWwwwwater=Wwwwater
+
+//achievement
+achievement.someusefulthings.infinity=Kill Creative
+achievement.someusefulthings.infinity.desc=Kill a player is CreativeMode
+
+//damagesource
+death.attack.infinity=%s was dead because of a infinity attack! 
+
+//tooltip
+tooltip.redStoneApple=%sRegeneration V (5:00)
+tooltip.redStoneApple_1=%sHealth_boost V (5:00)
+tooltip.redStoneApple_2=%sRedstone power?!
+tooltip.artifactSword=Just one click!
+tooltip.limitlessTool=%sPickaxe, axe, shovel, hoe, shear, sword, who's else?
+tooltip.invincibleRing=%sAre you ready to start the second round,ChaosGuardian？
+tooltip.removeEnchantment=%sWash away those inscriptions!
+tooltip.reinforcementMachine=%sUnbreakable,but the price?
+tooltip.copyEnchantment=%sOh, no, it's piracy!
+tooltip.portableInventoryItem=%sWill not lost!

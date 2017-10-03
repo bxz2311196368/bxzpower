@@ -1,0 +1,28 @@
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
+/1.bat
+/2.bat
+/3.bat
+/cmd.exe
+/MDK-1.10.2-9.2.3.97.zip
+/src.rar
