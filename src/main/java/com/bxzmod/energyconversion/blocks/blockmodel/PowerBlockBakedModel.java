@@ -29,7 +29,7 @@ public class PowerBlockBakedModel implements IBakedModel
 	public static final ModelResourceLocation POWER_BLOCK_BAKED_MODEL = new ModelResourceLocation(
 			Info.MODID + ":powerblock");
 
-	private TextureAtlasSprite sprite[];
+	private TextureAtlasSprite sprite[] = new TextureAtlasSprite[2];
 	private VertexFormat format;
 
 	public PowerBlockBakedModel(IModelState state, VertexFormat format,
