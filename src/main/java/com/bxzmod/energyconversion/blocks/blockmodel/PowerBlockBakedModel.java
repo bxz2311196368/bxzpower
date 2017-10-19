@@ -46,7 +46,7 @@ public class PowerBlockBakedModel implements IBakedModel
 		switch (side)
 		{
 		case UP:
-			quads = createQuad(new Vec3d(0, 1, 1), new Vec3d(1, 1, 1), new Vec3d(1, 1, 0), new Vec3d(0, 1, 0), i);
+			quads = createQuad(new Vec3d(0, 1, 0), new Vec3d(0, 1, 1), new Vec3d(1, 1, 1), new Vec3d(1, 1, 0), i);
 			break;
 		case DOWN:
 			quads = createQuad(new Vec3d(0, 0, 0), new Vec3d(1, 0, 0), new Vec3d(1, 0, 1), new Vec3d(0, 0, 1), i);
@@ -115,15 +115,22 @@ public class PowerBlockBakedModel implements IBakedModel
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand)
 	{
-		if (side != null)
+		if (side == null)
 		{
 			return Collections.emptyList();
 		}
-		IExtendedBlockState extendedBlockState = (IExtendedBlockState) state;
+		IExtendedBlockState extendedBlockState;
 		List<BakedQuad> quads = new ArrayList<>();
+		if (state == null)
+		{
+			for(EnumFacing f : EnumFacing.values())
+				quads.add(this.setQuad(f, 0));
+			return quads;
+		}
+		else
+			extendedBlockState = (IExtendedBlockState) state;
 		byte[] a = extendedBlockState.getValue(PowerBlock.SIDE_CONFIG);
-		for (int i = 0; i < 6; i++)
-			quads.add(this.setQuad(EnumFacing.values()[i], a[i]));
+		quads.add(this.setQuad(side, 0));
 		return quads;
 	}
 

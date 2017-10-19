@@ -1,7 +1,7 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "orientable",
+        "model": "energyconversion:powerblock",
         "textures": {
             "top": "energyconversion:blocks/power_block_in",
             "side": "energyconversion:blocks/power_block_out",
