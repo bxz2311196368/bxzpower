@@ -28,7 +28,9 @@ public class PowerBlockModel implements IModel
 	public Collection<ResourceLocation> getTextures()
 	{
 		return ImmutableSet.of(new ResourceLocation(Info.MODID, "blocks/power_block_in"),
-				new ResourceLocation(Info.MODID, "blocks/power_block_out"));
+				new ResourceLocation(Info.MODID, "blocks/power_block_out"),
+				new ResourceLocation(Info.MODID, "blocks/power_block_face_in"),
+				new ResourceLocation(Info.MODID, "blocks/power_block_face_out"));
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class PowerBlockTileEntity extends TileEntity implements ITickable, IEnergyReceiver, IEnergyProvider
 {
 	private int type = 0;
+	//private boolean refresh = true;
 	protected int totalEnergy = 0;
 	private byte[] bSideType = { 0, 0, 1, 1, 1, 1 };// 1 = send ,0 = receive;
 	public static final int capacity = Integer.MAX_VALUE;
@@ -52,7 +53,7 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 	{
 		this.bSideType[form.getIndex()] = (byte) (this.bSideType[form.getIndex()] == 1 ? 0 : 1);
 		IExtendedBlockState extendedBlockState = (IExtendedBlockState) this.worldObj.getBlockState(this.pos);
-		extendedBlockState.withProperty(PowerBlock.SIDE_CONFIG, this.bSideType);
+		extendedBlockState = extendedBlockState.withProperty(PowerBlock.SIDE_CONFIG, this.bSideType);
 	}
 
 	@Override
@@ -92,7 +93,7 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
 	{
-		return oldState.getBlock() != newState.getBlock();
+		return oldState != newState;
 	}
 
 	@Override
