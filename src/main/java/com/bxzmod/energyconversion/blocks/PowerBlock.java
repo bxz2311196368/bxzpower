@@ -120,12 +120,20 @@ public class PowerBlock extends BlockContainer
 		IBlockState origin = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, stack);
 		return origin.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
-
+/*
 	@Override
 	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
 	{
 		IExtendedBlockState s = (IExtendedBlockState) state;
 		PowerBlockTileEntity te = (PowerBlockTileEntity) world.getTileEntity(pos);
+		return s.withProperty(SIDE_CONFIG, te.getByte());
+	}
+*/
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
+	{
+		IExtendedBlockState s = (IExtendedBlockState) state;
+		PowerBlockTileEntity te = (PowerBlockTileEntity) worldIn.getTileEntity(pos);
 		return s.withProperty(SIDE_CONFIG, te.getByte());
 	}
 

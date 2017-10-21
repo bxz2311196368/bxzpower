@@ -39,8 +39,7 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 
 	public void setByte(byte[] b)
 	{
-		for (int i = 0; i < 6; i++)
-			this.bSideType[i] = b[i];
+		System.arraycopy(b, 0, this.bSideType, 0, 6);
 	}
 
 	public byte[] getByte()
@@ -101,7 +100,7 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 
 		super.readFromNBT(nbt);
 		this.totalEnergy = nbt.getInteger("totalEnergy");
-		this.bSideType = nbt.getByteArray("sideType").clone();
+		System.arraycopy(nbt.getByteArray("sideType"), 0, this.bSideType, 0, 6);
 		if (totalEnergy > capacity)
 		{
 			totalEnergy = capacity;

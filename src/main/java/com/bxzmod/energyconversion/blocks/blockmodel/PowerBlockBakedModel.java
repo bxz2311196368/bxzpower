@@ -7,6 +7,8 @@ import java.util.List;
 import javax.vecmath.Matrix4f;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.bxzmod.energyconversion.Info;
 import com.bxzmod.energyconversion.blocks.PowerBlock;
@@ -37,6 +39,8 @@ public class PowerBlockBakedModel implements IBakedModel
 
 	private TextureAtlasSprite sprite[] = new TextureAtlasSprite[4];
 	private VertexFormat format;
+	
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	public PowerBlockBakedModel(IModelState state, VertexFormat format,
 			Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
@@ -138,14 +142,12 @@ public class PowerBlockBakedModel implements IBakedModel
 		{
 			return Collections.emptyList();
 		}
-		byte[] a = extendedBlockState.getValue(PowerBlock.SIDE_CONFIG);
+		byte[] a = new byte[6];
+		LOGGER.info(extendedBlockState.getValue(PowerBlock.SIDE_CONFIG).toString());
+		System.arraycopy(extendedBlockState.getValue(PowerBlock.SIDE_CONFIG), 0, a, 0, 6);
 		quads.add(this.setQuad(side, a[side.getIndex()]));
 		return quads;
 	}
-	
-	public static boolean isArray(Object obj) {
-        return (obj != null && obj.getClass().isArray());
-    }
 
 	@Override
 	public boolean isAmbientOcclusion()
