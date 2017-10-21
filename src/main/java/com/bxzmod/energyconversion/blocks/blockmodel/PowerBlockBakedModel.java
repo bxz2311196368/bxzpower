@@ -126,14 +126,13 @@ public class PowerBlockBakedModel implements IBakedModel
 	{
 		IExtendedBlockState extendedBlockState;
 		List<BakedQuad> quads = new ArrayList<>();
-		
+
 		if (state == null)
 		{
-			for(EnumFacing f : EnumFacing.values())
+			for (EnumFacing f : EnumFacing.values())
 				quads.add(this.setQuad(f, 0));
 			return quads;
-		}
-		else
+		} else
 			extendedBlockState = (IExtendedBlockState) state;
 		if (side == null)
 		{
@@ -143,6 +142,10 @@ public class PowerBlockBakedModel implements IBakedModel
 		quads.add(this.setQuad(side, a[side.getIndex()]));
 		return quads;
 	}
+	
+	public static boolean isArray(Object obj) {
+        return (obj != null && obj.getClass().isArray());
+    }
 
 	@Override
 	public boolean isAmbientOcclusion()

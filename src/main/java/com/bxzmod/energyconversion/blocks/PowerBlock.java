@@ -126,7 +126,7 @@ public class PowerBlock extends BlockContainer
 	{
 		IExtendedBlockState s = (IExtendedBlockState) state;
 		PowerBlockTileEntity te = (PowerBlockTileEntity) world.getTileEntity(pos);
-		return s.withProperty(SIDE_CONFIG, te.getByte()).withProperty(FACING, state.getValue(FACING));
+		return s.withProperty(SIDE_CONFIG, te.getByte());
 	}
 
 	@Override

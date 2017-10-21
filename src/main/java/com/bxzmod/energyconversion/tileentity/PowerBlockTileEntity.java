@@ -25,7 +25,6 @@ import net.minecraftforge.fml.relauncher.Side;
 public class PowerBlockTileEntity extends TileEntity implements ITickable, IEnergyReceiver, IEnergyProvider
 {
 	private int type = 0;
-	//private boolean refresh = true;
 	protected int totalEnergy = 0;
 	private byte[] bSideType = { 0, 0, 1, 1, 1, 1 };// 1 = send ,0 = receive;
 	public static final int capacity = Integer.MAX_VALUE;
@@ -93,7 +92,7 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState)
 	{
-		return oldState != newState;
+		return oldState.getBlock() != newState.getBlock();
 	}
 
 	@Override
