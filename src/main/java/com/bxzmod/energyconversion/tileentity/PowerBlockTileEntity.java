@@ -1,5 +1,10 @@
 package com.bxzmod.energyconversion.tileentity;
 
+import javax.annotation.Nullable;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.bxzmod.energyconversion.blocks.PowerBlock;
 
 import cofh.api.energy.EnergyStorage;
@@ -9,6 +14,7 @@ import cofh.api.energy.IEnergyTransport;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -26,32 +32,29 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 {
 	private int type = 0;
 	protected int totalEnergy = 0;
-	private byte[] bSideType = { 0, 0, 1, 1, 1, 1 };// 1 = send ,0 = receive;
 	public static final int capacity = Integer.MAX_VALUE;
 	public static final Capability<IEnergyStorage> ENERGY_HANDLER = null;
+	
+	boolean[] sideType = new boolean[6];
+	
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	protected EnergyStorage storage = new EnergyStorage(capacity);
 
 	public PowerBlockTileEntity()
 	{
-
+		
 	}
-
-	public void setByte(byte[] b)
+	
+	public boolean isSend(EnumFacing form)
 	{
-		System.arraycopy(b, 0, this.bSideType, 0, 6);
-	}
-
-	public byte[] getByte()
-	{
-		return bSideType;
+		return this.sideType[form.getIndex()];
 	}
 
 	public void setSideType(EnumFacing form)
 	{
-		this.bSideType[form.getIndex()] = (byte) (this.bSideType[form.getIndex()] == 1 ? 0 : 1);
-		IExtendedBlockState extendedBlockState = (IExtendedBlockState) this.worldObj.getBlockState(this.pos);
-		extendedBlockState = extendedBlockState.withProperty(PowerBlock.SIDE_CONFIG, this.bSideType);
+		this.sideType[form.getIndex()] = !this.sideType[form.getIndex()];
+		this.worldObj.markBlockRangeForRenderUpdate(pos, pos);
 	}
 
 	@Override
@@ -97,10 +100,13 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 	@Override
 	public void readFromNBT(NBTTagCompound nbt)
 	{
-
 		super.readFromNBT(nbt);
+		//LOGGER.info("read" + nbt.toString());
+		NBTTagList list = new NBTTagList();
 		this.totalEnergy = nbt.getInteger("totalEnergy");
-		System.arraycopy(nbt.getByteArray("sideType"), 0, this.bSideType, 0, 6);
+		list = (NBTTagList) nbt.getTag("sideType");
+		for (int i = 0; i < 6; i++)
+			this.sideType[i] = ((NBTTagCompound) list.get(i)).getBoolean("side" + i);
 		if (totalEnergy > capacity)
 		{
 			totalEnergy = capacity;
@@ -111,7 +117,6 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
 	{
-
 		super.writeToNBT(nbt);
 		nbt = storage.writeToNBT(nbt);
 		if (totalEnergy < 0)
@@ -119,7 +124,15 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 			totalEnergy = 0;
 		}
 		nbt.setInteger("totalEnergy", totalEnergy);
-		nbt.setByteArray("sideType", this.bSideType);
+		NBTTagList list = new NBTTagList();
+		for(int i = 0; i <6; i++)
+		{
+			NBTTagCompound a = new NBTTagCompound();
+			a.setBoolean("side" + i, this.sideType[i]);
+			list.appendTag(a);
+		}
+		nbt.setTag("sideType", list);
+		//LOGGER.info("write"+nbt.toString());
 		return nbt;
 	}
 
@@ -134,7 +147,7 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 	@Override
 	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate)
 	{
-		if (bSideType[from.getIndex()] == (byte) 1)
+		if (sideType[from.getIndex()])
 			return 0;
 		int get = storage.receiveEnergy(maxReceive, simulate);
 		if (!simulate)
@@ -193,7 +206,7 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 	{
 		for (int i = 0; i < 6 && storage.getEnergyStored() > 0; i++)
 		{
-			if (bSideType[i] == (byte) 0)
+			if (!sideType[i])
 				continue;
 			int lose = -this.insertEnergyIntoAdjacentEnergyReceiver(this, EnumFacing.VALUES[i],
 					Math.min(storage.getMaxExtract(), storage.getEnergyStored()), false);

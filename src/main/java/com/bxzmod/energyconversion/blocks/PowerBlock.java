@@ -3,6 +3,7 @@ package com.bxzmod.energyconversion.blocks;
 import java.util.List;
 
 import com.bxzmod.energyconversion.UnlistedByteArrayProperty;
+import com.bxzmod.energyconversion.UnlistedPropertyBlockAvailable;
 import com.bxzmod.energyconversion.creativetabs.CreativeTabsLoader;
 import com.bxzmod.energyconversion.tileentity.PowerBlockTileEntity;
 import com.google.common.collect.ImmutableList;
@@ -25,6 +26,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -41,6 +43,13 @@ public class PowerBlock extends BlockContainer
 	public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
 	public static final UnlistedByteArrayProperty SIDE_CONFIG = new UnlistedByteArrayProperty("side_config");
+	
+	public static final UnlistedPropertyBlockAvailable NORTH = new UnlistedPropertyBlockAvailable("north");
+    public static final UnlistedPropertyBlockAvailable SOUTH = new UnlistedPropertyBlockAvailable("south");
+    public static final UnlistedPropertyBlockAvailable WEST = new UnlistedPropertyBlockAvailable("west");
+    public static final UnlistedPropertyBlockAvailable EAST = new UnlistedPropertyBlockAvailable("east");
+    public static final UnlistedPropertyBlockAvailable UP = new UnlistedPropertyBlockAvailable("up");
+    public static final UnlistedPropertyBlockAvailable DOWN = new UnlistedPropertyBlockAvailable("down");
 
 	public PowerBlock()
 	{
@@ -51,7 +60,47 @@ public class PowerBlock extends BlockContainer
 		this.setHarvestLevel("pickaxe", 0);
 		this.setCreativeTab(CreativeTabsLoader.tab);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+		this.setLightLevel(1.0F);
+	}
 
+	public UnlistedPropertyBlockAvailable getProperty(EnumFacing from)
+	{
+		switch(from)
+		{
+		case UP:
+			return this.UP;
+		case DOWN:
+			return this.DOWN;
+		case NORTH:
+			return this.NORTH;
+		case SOUTH:
+			return this.SOUTH;
+		case WEST:
+			return this.WEST;
+		case EAST:
+			return this.EAST;
+		default :
+			return null;
+		}
+			
+	}
+
+	@Override
+	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		return 15;
+	}
+
+	@Override
+	public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		return 255;
+	}
+
+	@Override
+	public boolean canDropFromExplosion(Explosion explosionIn)
+	{
+		return false;
 	}
 
 	@Override
@@ -93,7 +142,7 @@ public class PowerBlock extends BlockContainer
 	protected BlockStateContainer createBlockState()
 	{
 		IProperty[] listedProperties = new IProperty[] { FACING };
-		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { SIDE_CONFIG };
+		IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { NORTH, SOUTH, WEST, EAST, UP, DOWN };
 		return new ExtendedBlockState(this, listedProperties, unlistedProperties);
 	}
 
@@ -120,21 +169,21 @@ public class PowerBlock extends BlockContainer
 		IBlockState origin = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, stack);
 		return origin.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
 	}
-/*
+
 	@Override
-	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
-	{
-		IExtendedBlockState s = (IExtendedBlockState) state;
-		PowerBlockTileEntity te = (PowerBlockTileEntity) world.getTileEntity(pos);
-		return s.withProperty(SIDE_CONFIG, te.getByte());
-	}
-*/
-	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
 	{
 		IExtendedBlockState s = (IExtendedBlockState) state;
 		PowerBlockTileEntity te = (PowerBlockTileEntity) worldIn.getTileEntity(pos);
-		return s.withProperty(SIDE_CONFIG, te.getByte());
+		boolean north = te.isSend(EnumFacing.NORTH);
+		boolean south = te.isSend(EnumFacing.SOUTH);
+		boolean west = te.isSend(EnumFacing.WEST);
+		boolean east = te.isSend(EnumFacing.EAST);
+		boolean up = te.isSend(EnumFacing.UP);
+		boolean down = te.isSend(EnumFacing.DOWN);
+
+		return s.withProperty(NORTH, north).withProperty(SOUTH, south).withProperty(WEST, west).withProperty(EAST, east)
+				.withProperty(UP, up).withProperty(DOWN, down).withProperty(FACING, state.getValue(FACING));
 	}
 
 	@Override

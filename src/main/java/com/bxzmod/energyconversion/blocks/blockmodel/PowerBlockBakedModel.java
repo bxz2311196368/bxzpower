@@ -15,6 +15,7 @@ import com.bxzmod.energyconversion.blocks.PowerBlock;
 import com.google.common.base.Function;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -27,6 +28,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelState;
@@ -142,17 +144,15 @@ public class PowerBlockBakedModel implements IBakedModel
 		{
 			return Collections.emptyList();
 		}
-		byte[] a = new byte[6];
-		LOGGER.info(extendedBlockState.getValue(PowerBlock.SIDE_CONFIG).toString());
-		System.arraycopy(extendedBlockState.getValue(PowerBlock.SIDE_CONFIG), 0, a, 0, 6);
-		quads.add(this.setQuad(side, a[side.getIndex()]));
+		boolean b = extendedBlockState.getValue(((PowerBlock)extendedBlockState.getBlock()).getProperty(side));
+		quads.add(this.setQuad(side, b?1:0));
 		return quads;
 	}
 
 	@Override
 	public boolean isAmbientOcclusion()
 	{
-		return false;
+		return true;
 	}
 
 	@Override

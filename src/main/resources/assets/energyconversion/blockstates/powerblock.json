@@ -1,5 +1,8 @@
 {
     "variants": {
-       "normal":{"model": "energyconversion:powerblock"}
+       "facing=north":{"model": "energyconversion:powerblock"},
+       "facing=south":{"model": "energyconversion:powerblock","y": 180, "uvlock": true},
+       "facing=east":{"model": "energyconversion:powerblock", "y": 90, "uvlock": true},
+       "facing=west":{"model": "energyconversion:powerblock", "y": 270, "uvlock": true}
        }
 }
