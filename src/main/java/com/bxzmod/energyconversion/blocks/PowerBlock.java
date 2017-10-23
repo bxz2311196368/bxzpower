@@ -1,6 +1,7 @@
 package com.bxzmod.energyconversion.blocks;
 
 import java.util.List;
+import java.util.Random;
 
 import com.bxzmod.energyconversion.UnlistedByteArrayProperty;
 import com.bxzmod.energyconversion.UnlistedPropertyBlockAvailable;
@@ -18,12 +19,16 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.Explosion;
@@ -83,6 +88,58 @@ public class PowerBlock extends BlockContainer
 			return null;
 		}
 			
+	}
+/*
+	@Override
+	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
+	{
+		List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
+		ItemStack item = new ItemStack(Item.getItemFromBlock(this));
+		PowerBlockTileEntity te = (PowerBlockTileEntity) world.getTileEntity(pos);
+		item.setTagCompound(te.getNBTFromData(new NBTTagCompound()));
+		ret.add(item);
+		return ret;
+	}
+*/
+	
+	@Override
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer,
+			ItemStack stack)
+	{
+		PowerBlockTileEntity te = (PowerBlockTileEntity) worldIn.getTileEntity(pos);
+		if(stack.hasTagCompound())
+		{
+			NBTTagCompound nbt = stack.getTagCompound();
+			if(nbt.hasKey("totalEnergy") && nbt.hasKey("sideType") && nbt.hasKey("Energy"))
+				te.setDataByNBT(nbt);
+		}
+	}
+
+	@Override
+	public boolean canHarvestBlock(IBlockAccess world, BlockPos pos, EntityPlayer player)
+	{
+		return true;
+	}
+
+	@Override
+	public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, TileEntity te,
+			ItemStack stack)
+	{
+		player.addStat(StatList.getBlockStats(this));
+        player.addExhaustion(0.025F);
+		ItemStack item = new ItemStack(Item.getItemFromBlock(this));
+		item.setTagCompound(((PowerBlockTileEntity)te).getNBTFromData(new NBTTagCompound()));
+		spawnAsEntity(worldIn, pos, item);
+	}
+
+	@Override
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
+			EntityPlayer player)
+	{
+		ItemStack item = new ItemStack(Item.getItemFromBlock(this));
+		PowerBlockTileEntity te = (PowerBlockTileEntity) world.getTileEntity(pos);
+		item.setTagCompound(te.getNBTFromData(new NBTTagCompound()));
+		return item;
 	}
 
 	@Override

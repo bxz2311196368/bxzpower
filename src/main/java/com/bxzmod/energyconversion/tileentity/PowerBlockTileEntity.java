@@ -6,6 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.bxzmod.energyconversion.blocks.PowerBlock;
+import com.bxzmod.energyconversion.capability.CapabilityLoader;
+import com.bxzmod.energyconversion.network.NetworkLoader;
+import com.bxzmod.energyconversion.network.TileEntitySync;
 
 import cofh.api.energy.EnergyStorage;
 import cofh.api.energy.IEnergyProvider;
@@ -13,8 +16,11 @@ import cofh.api.energy.IEnergyReceiver;
 import cofh.api.energy.IEnergyTransport;
 import net.darkhax.tesla.capability.TeslaCapabilities;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -34,6 +40,7 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 	protected int totalEnergy = 0;
 	public static final int capacity = Integer.MAX_VALUE;
 	public static final Capability<IEnergyStorage> ENERGY_HANDLER = null;
+	boolean needUpdate;
 	
 	boolean[] sideType = new boolean[6];
 	
@@ -43,7 +50,15 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 
 	public PowerBlockTileEntity()
 	{
-		
+		if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			needUpdate = true;
+		else
+			needUpdate = false;
+	}
+	
+	public void markHasUpdated()
+	{
+		this.needUpdate = false;
 	}
 	
 	public boolean isSend(EnumFacing form)
@@ -55,6 +70,7 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 	{
 		this.sideType[form.getIndex()] = !this.sideType[form.getIndex()];
 		this.worldObj.markBlockRangeForRenderUpdate(pos, pos);
+		this.markDirty();
 	}
 
 	@Override
@@ -65,9 +81,11 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 		{
 			return true;
 		}
+		if (CapabilityLoader.SIDE_CONFIG.equals(capability))
+			return true;
 		if (Loader.isModLoaded("tesla"))
 		{
-			if (capability == TeslaCapabilities.CAPABILITY_PRODUCER)
+			if (capability == TeslaCapabilities.CAPABILITY_HOLDER)
 				return true;
 		}
 		return super.hasCapability(capability, from);
@@ -83,11 +101,15 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 		}
 		if (Loader.isModLoaded("tesla"))
 		{
-			if (capability == TeslaCapabilities.CAPABILITY_PRODUCER)
+			if (capability == TeslaCapabilities.CAPABILITY_HOLDER)
 			{
 				return (T) this;
 			}
 		}
+		if (CapabilityLoader.SIDE_CONFIG.equals(capability))
+        {
+            return (T) this;
+        }
 		return super.getCapability(capability, from);
 	}
 
@@ -96,12 +118,11 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 	{
 		return oldState.getBlock() != newState.getBlock();
 	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt)
+	
+	public void setDataByNBT(NBTTagCompound nbt)
 	{
-		super.readFromNBT(nbt);
-		//LOGGER.info("read" + nbt.toString());
+		if(!nbt.hasKey("sideType"))
+			return;
 		NBTTagList list = new NBTTagList();
 		this.totalEnergy = nbt.getInteger("totalEnergy");
 		list = (NBTTagList) nbt.getTag("sideType");
@@ -114,10 +135,8 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 		storage.readFromNBT(nbt);
 	}
 
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+	public NBTTagCompound getNBTFromData(NBTTagCompound nbt)
 	{
-		super.writeToNBT(nbt);
 		nbt = storage.writeToNBT(nbt);
 		if (totalEnergy < 0)
 		{
@@ -132,8 +151,29 @@ public class PowerBlockTileEntity extends TileEntity implements ITickable, IEner
 			list.appendTag(a);
 		}
 		nbt.setTag("sideType", list);
-		//LOGGER.info("write"+nbt.toString());
 		return nbt;
+	}
+	
+	@Override
+	public void readFromNBT(NBTTagCompound nbt)
+	{
+		super.readFromNBT(nbt);
+		if(needUpdate)
+		{
+			TileEntitySync message = new TileEntitySync();
+			message.nbt = nbt.copy();
+			message.nbt.setInteger("world", Minecraft.getMinecraft().theWorld.provider.getDimension());
+			message.nbt.setString("player", Minecraft.getMinecraft().thePlayer.getName());
+			NetworkLoader.instance.sendToServer(message);
+		}
+		this.setDataByNBT(nbt);
+	}
+
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+	{
+		super.writeToNBT(nbt);
+		return this.getNBTFromData(nbt);
 	}
 
 	/* IEnergyConnection */
