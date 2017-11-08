@@ -41,7 +41,7 @@ public class PowerBlockBakedModel implements IBakedModel
 
 	private TextureAtlasSprite sprite[] = new TextureAtlasSprite[4];
 	private VertexFormat format;
-	
+
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	public PowerBlockBakedModel(IModelState state, VertexFormat format,
@@ -52,7 +52,7 @@ public class PowerBlockBakedModel implements IBakedModel
 		sprite[1] = bakedTextureGetter.apply(new ResourceLocation(Info.MODID, "blocks/power_block_out"));
 		sprite[2] = bakedTextureGetter.apply(new ResourceLocation(Info.MODID, "blocks/power_block_face_in"));
 		sprite[3] = bakedTextureGetter.apply(new ResourceLocation(Info.MODID, "blocks/power_block_face_out"));
-		
+
 	}
 
 	private BakedQuad setQuad(EnumFacing side, int i)
@@ -67,7 +67,7 @@ public class PowerBlockBakedModel implements IBakedModel
 			quads = createQuad(new Vec3d(1, 0, 1), new Vec3d(0, 0, 1), new Vec3d(0, 0, 0), new Vec3d(1, 0, 0), i);
 			break;
 		case NORTH:
-			quads = createQuad(new Vec3d(1, 1, 0), new Vec3d(1, 0, 0), new Vec3d(0, 0, 0), new Vec3d(0, 1, 0), i+2);
+			quads = createQuad(new Vec3d(1, 1, 0), new Vec3d(1, 0, 0), new Vec3d(0, 0, 0), new Vec3d(0, 1, 0), i + 2);
 			break;
 		case SOUTH:
 			quads = createQuad(new Vec3d(0, 1, 1), new Vec3d(0, 0, 1), new Vec3d(1, 0, 1), new Vec3d(1, 1, 1), i);
@@ -144,8 +144,8 @@ public class PowerBlockBakedModel implements IBakedModel
 		{
 			return Collections.emptyList();
 		}
-		boolean b = extendedBlockState.getValue(((PowerBlock)extendedBlockState.getBlock()).getProperty(side));
-		quads.add(this.setQuad(side, b?1:0));
+		boolean b = extendedBlockState.getValue(((PowerBlock) extendedBlockState.getBlock()).getProperty(side));
+		quads.add(this.setQuad(side, b ? 1 : 0));
 		return quads;
 	}
 
@@ -184,5 +184,5 @@ public class PowerBlockBakedModel implements IBakedModel
 	{
 		return null;
 	}
-	
+
 }

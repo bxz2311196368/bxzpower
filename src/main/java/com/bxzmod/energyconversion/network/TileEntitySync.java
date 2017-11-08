@@ -29,17 +29,17 @@ public class TileEntitySync implements IMessage
 	public NBTTagCompound nbt;
 
 	@Override
-	public void fromBytes(ByteBuf buf) 
+	public void fromBytes(ByteBuf buf)
 	{
 		nbt = ByteBufUtils.readTag(buf);
 	}
 
 	@Override
-	public void toBytes(ByteBuf buf) 
+	public void toBytes(ByteBuf buf)
 	{
 		ByteBufUtils.writeTag(buf, nbt);
 	}
-	
+
 	public static class ToClientHandler implements IMessageHandler<TileEntitySync, IMessage>
 	{
 
@@ -48,10 +48,10 @@ public class TileEntitySync implements IMessage
 		{
 			if (ctx.side == Side.CLIENT)
 			{
-				//LOGGER.info(message.nbt.toString());
-				final NBTTagCompound nbt = (NBTTagCompound) message.nbt;
-                Minecraft.getMinecraft().addScheduledTask(new Runnable()
-                {
+				// LOGGER.info(message.nbt.toString());
+				final NBTTagCompound nbt = (NBTTagCompound) message.nbt.copy();
+				Minecraft.getMinecraft().addScheduledTask(new Runnable()
+				{
 					@Override
 					public void run()
 					{
@@ -61,20 +61,23 @@ public class TileEntitySync implements IMessage
 						if (world.provider.getDimension() == nbt.getInteger("world"))
 						{
 							te = (PowerBlockTileEntity) world.getTileEntity(pos);
-							te.markHasUpdated();
-							te.readFromNBT(nbt);
-							world.markBlockRangeForRenderUpdate(pos, pos);
+							if (te != null)
+							{
+								te.readFromNBT(nbt);
+								world.markBlockRangeForRenderUpdate(pos, pos);
+							}
 						}
 
 					}
-                	
-                });
-				
+
+				});
+
 			}
 			return null;
 		}
-		
+
 	}
+
 	public static class ToServerHandler implements IMessageHandler<TileEntitySync, IMessage>
 	{
 
@@ -82,12 +85,12 @@ public class TileEntitySync implements IMessage
 		public IMessage onMessage(TileEntitySync message, MessageContext ctx)
 		{
 			final MinecraftServer Server = FMLCommonHandler.instance().getMinecraftServerInstance();
-			
+
 			if (ctx.side == Side.SERVER)
 			{
 				final NBTTagCompound nbt = (NBTTagCompound) message.nbt;
-                Server.addScheduledTask(new Runnable()
-                {
+				Server.addScheduledTask(new Runnable()
+				{
 					@Override
 					public void run()
 					{
@@ -104,11 +107,11 @@ public class TileEntitySync implements IMessage
 						EntityPlayerMP player = Server.getPlayerList().getPlayerByUsername(nbt.getString("player"));
 						NetworkLoader.instance.sendTo(message1, player);
 					}
-                	
-                });
+
+				});
 			}
 			return null;
 		}
-		
+
 	}
 }

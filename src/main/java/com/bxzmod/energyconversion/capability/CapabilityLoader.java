@@ -7,15 +7,16 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-public class CapabilityLoader 
+public class CapabilityLoader
 {
 	@CapabilityInject(ISideConfig.class)
-    public static Capability<ISideConfig> SIDE_CONFIG = null;
+	public static Capability<ISideConfig> SIDE_CONFIG = null;
 
-	public CapabilityLoader(FMLPreInitializationEvent event) 
+	public CapabilityLoader(FMLPreInitializationEvent event)
 	{
 		CapabilityManager.INSTANCE.register(ISideConfig.class, new SideConfig.Storage(),
-				new Callable<SideConfig.Implementation>() {
+				new Callable<SideConfig.Implementation>()
+				{
 					@Override
 					public SideConfig.Implementation call() throws Exception
 					{

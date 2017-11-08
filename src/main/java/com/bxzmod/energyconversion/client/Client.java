@@ -2,6 +2,7 @@ package com.bxzmod.energyconversion.client;
 
 import com.bxzmod.energyconversion.blocks.BlockRenderLoader;
 import com.bxzmod.energyconversion.blocks.blockmodel.ModelLoader;
+import com.bxzmod.energyconversion.items.ItemRenderLoader;
 import com.bxzmod.energyconversion.server.Common;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -16,6 +17,7 @@ public class Client extends Common
 		super.preInit(event);
 		new ModelLoader(event);
 		new BlockRenderLoader(event);
+		new ItemRenderLoader(event);
 
 	}
 

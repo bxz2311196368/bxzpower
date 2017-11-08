@@ -36,7 +36,7 @@ public class SideConfig
 		{
 			NBTTagCompound nbt = new NBTTagCompound();
 			NBTTagList list = new NBTTagList();
-			for(int i = 0; i <6; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				NBTTagCompound a = new NBTTagCompound();
 				a.setBoolean("side" + i, this.side[i]);
@@ -57,7 +57,7 @@ public class SideConfig
 		@Override
 		public void setSide(boolean[] b)
 		{
-			for(int i = 0; i < 6; i++)
+			for (int i = 0; i < 6; i++)
 				this.side[i] = b[i];
 
 		}

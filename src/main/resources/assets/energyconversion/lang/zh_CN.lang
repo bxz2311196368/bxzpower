@@ -1,6 +1,7 @@
 itemGroup.energyconversion=能量转换
 
 //item
+item.wrench.name=扳手
 
 //block
 tile.powerblock.name=能量转换器
@@ -12,7 +13,9 @@ tile.powerblock.name=能量转换器
 //damagesource
 
 //tooltip
-tooltip.powerblock=右击调整IC输出
+tooltip.powerblock=%s右击打开GUI
+tooltip.powerblock1=%s潜行右击调整输入输出
+tooltip.wrench=%s右击调整IC输出
 
 //command
 
@@ -23,5 +26,5 @@ msg.2=中压(128)
 msg.3=高压(512)
 msg.4=超高压(2048)
 msg.5=极高压(8192)
-
+msg.total_energy=总能量
 //gui
